@@ -57,6 +57,8 @@ public class RelogioBean extends Thread {
 //            Logger.getLogger(RelogioBean.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
+    
+    
     public void iniciaRelogio() throws PropertyVetoException, InterruptedException {
 
         hora = tempo.getHour();
@@ -65,16 +67,15 @@ public class RelogioBean extends Thread {
         
         while (true){
             Thread.sleep(1000);
-            segundo++;
-            
+            setSegundo(segundo+1);            
             if(segundo == 59){
-                minuto++;
-                segundo = 0;
+                setMinuto(minuto+1);
+                setSegundo(0);
                 if(minuto == 60){
-                    hora++;
-                    minuto = 0;
+                    setHora(hora+1);
+                    setMinuto(0);
                     if(hora == 24){
-                        hora = 0;
+                        setHora(0);
                     }
                 }
             }
@@ -106,7 +107,9 @@ public class RelogioBean extends Thread {
     }
 
     public void setHora(int hora) {
+        int oldHora = hora;
         this.hora = hora;
+        this.pcs.firePropertyChange("hora", oldHora, hora);
     }
 
     public int getMinuto() {
@@ -114,7 +117,9 @@ public class RelogioBean extends Thread {
     }
 
     public void setMinuto(int minuto) {
+        int oldMinuto = minuto;
         this.minuto = minuto;
+        this.pcs.firePropertyChange("minuto", oldMinuto, minuto);
     }
 
     public int getSegundo() {
@@ -122,7 +127,9 @@ public class RelogioBean extends Thread {
     }
 
     public void setSegundo(int segundo) {
+        int oldSegundo = segundo;
         this.segundo = segundo;
+        this.pcs.firePropertyChange("segundo", oldSegundo, segundo);
     }
 
 }
