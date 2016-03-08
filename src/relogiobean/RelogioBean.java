@@ -12,9 +12,7 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import javafx.util.converter.LocalDateTimeStringConverter;
 
 /**
  *
@@ -29,6 +27,8 @@ public class RelogioBean extends Thread {
 
     public RelogioBean() {
         tempo = LocalTime.now();
+        
+        
     }
 
     private final VetoableChangeSupport vcs = new VetoableChangeSupport(this);
@@ -38,22 +38,49 @@ public class RelogioBean extends Thread {
             iniciaRelogio();
         } catch (PropertyVetoException ex) {
             Logger.getLogger(RelogioBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void iniciaRelogio() throws PropertyVetoException {
-        try {
-            while (true) {
-                LocalTime old = tempo;
-                this.vcs.fireVetoableChange("tempo", old, tempo);
-                tempo = LocalTime.now();
-                this.pcs.firePropertyChange("tempo", old, tempo);
-                Thread.sleep(1000);
-                System.out.println(tempo);
-            }
         } catch (InterruptedException ex) {
             Logger.getLogger(RelogioBean.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+//    public void iniciaRelogio() throws PropertyVetoException {
+//        try {
+//            while (true) {
+//                LocalTime old = tempo;
+//                this.vcs.fireVetoableChange("tempo", old, tempo);
+//                tempo = LocalTime.now();
+//                this.pcs.firePropertyChange("tempo", old, tempo);
+//                Thread.sleep(1000);
+//                System.out.println(tempo);
+//            }
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(RelogioBean.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    public void iniciaRelogio() throws PropertyVetoException, InterruptedException {
+
+        hora = tempo.getHour();
+        minuto = tempo.getMinute();
+        segundo = tempo.getSecond();
+        
+        while (true){
+            Thread.sleep(1000);
+            segundo++;
+            
+            if(segundo == 59){
+                minuto++;
+                segundo = 0;
+                if(minuto == 60){
+                    hora++;
+                    minuto = 0;
+                    if(hora == 24){
+                        hora = 0;
+                    }
+                }
+            }
+            System.out.println(hora + ":" + minuto + ":" + segundo);
+        }
+        
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
